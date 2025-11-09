@@ -10,6 +10,8 @@ Proyek ini menyediakan solusi untuk membuat layanan email sementara tanpa perlu 
 
 Tujuannya adalah menyediakan fondasi backend yang memungkinkan pengguna menerima email di domain mereka sendiri dan melihat isinya secara instan, cocok untuk keperluan registrasi, pengujian, atau menjaga privasi.
 
+Sistem ini tidak menggunakan database sama sekali; email hanya diteruskan secara *real-time* jika ada `subscriber` yang sedang aktif mendengarkan alamat tersebut.
+
 ## Cara Kerja
 
 Alur kerja sistem ini sederhana dan efisien:

@@ -10,6 +10,8 @@ This project provides a solution for creating a temporary email service without 
 
 The goal is to provide a backend foundation that allows users to receive emails on their own domain and view their content instantly, suitable for registration, testing, or privacy purposes.
 
+This system does not use any database; it only forwards emails in real-time if a subscriber is actively listening for that address.
+
 ## How It Works
 
 The system's workflow is simple and efficient:
