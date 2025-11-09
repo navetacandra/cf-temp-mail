@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Temporary Mail</title>
+    </head>
+    <body>
+        <form action="#" method="POST">
+            <input
+                type="text"
+                name="username"
+                id="username"
+                pattern="^[a-z0-9.]{3,}$"
+                minlength="3"
+            />
+            <span aria-label="mail-domain">@</span>
+        </form>
+        <section id="mail-list"></section>
+        <script>
+            const usernameInput = document.getElementById("username");
+            const mailList = document.getElementById("mail-list");
+            const allowedPattern = /^[a-z0-9.]{3,}$/;
+            const debounceDelay = 1500;
+            let username = "",
+                wait = false,
+                event = null;
+
+            function connect() {
+                if (event !== null) {
+                    event.close();
+                    event = null;
+                }
+                event = new EventSource(
+                    `/subscribe?for=${encodeURIComponent(username)}`,
+                );
+                event.onerror = onError;
+                event.onmessage = onMessage;
+            }
+
+            function onError(event) {
+                console.error(event);
+            }
+
+            function onMessage(event) {
+                if (!event.data) return;
+                try {
+                    const data = JSON.parse(event.data);
+                    const div = document.createElement("div");
+                    div.innerHTML = `<details>
+                      <summary>
+                        <b>${data.subject}</b>
+                        <small>from ${data.from}</small>
+                      </summary>
+                      <article>${data.body}</article>
+                    </details>`;
+                    mailList.prepend(div.firstChild);
+                } catch (error) {
+                    console.error({ error });
+                }
+            }
+
+            usernameInput.addEventListener("input", (_) => {
+                if (wait) return;
+                wait = true;
+                setTimeout(() => {
+                    username = usernameInput.value.trim();
+                    if (username.length >= 3 || allowedPattern.test(username))
+                        connect();
+                    wait = false;
+                }, debounceDelay);
+            });
+        </script>
+    </body>
+</html>
